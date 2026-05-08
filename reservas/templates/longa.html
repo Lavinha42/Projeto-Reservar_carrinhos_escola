@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tela de Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .input-box {
+      margin-bottom: 20px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #4facfe;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .login-btn:hover {
+      background: #2196f3;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .footer a {
+      text-decoration: none;
+      color: #2196f3;
+    }
+    .btn-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        margin-top: 10px;
+    }
+    .btn-link:hover {
+        background-color: #ddd;
+    }
+
+  </style>
+</head>
+<body>
+<div class="login-box">
+    <h2>Login</h2>
+
+    <form method="POST" action="{% url 'longa' %}">
+        {% csrf_token %} <!-- Obrigatório para segurança no Django -->
+        
+        <div class="input-box">
+        <!-- O 'name' é o que o Django usa para identificar o campo -->
+        <input type="text" name="usuario" placeholder="Usuário" required>
+        </div>
+
+        <div class="input-box">
+        <input type="password" name="senha" placeholder="Senha" required>
+        </div>
+
+        <button type="submit" class="login-btn">Entrar</button>
+
+        <div class="footer">
+        <p>Não tem conta? <a href="{% url 'index' %}">Criar conta</a></p>
+        </div>
+    </form>
+    
+    {% if messages %}
+        <div style="color: red; text-align: center; margin-top: 10px;">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+
+</body>
+</html>

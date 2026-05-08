@@ -1,7 +1,12 @@
 from django.contrib import admin
 from .models import Equipamento, Reserva
 
-admin.site.register(Equipamento)
-admin.site.register(Reserva)
 
-# Register your models here.
+@admin.register(Equipamento)
+class EquipamentoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'tipo')
+
+
+@admin.register(Reserva)
+class ReservaAdmin(admin.ModelAdmin):
+    list_display = ('professor', 'equipamento', 'data_uso', 'periodo')

@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva de Carrinhos - PROATI</title>
+    
+    <!-- CONEXÃO COM O CSS -->
+    <link rel="stylesheet" href="{% static 'css/estiloMural.css' %}">
+</head>
+<body>
+
+<div class="header">
+    <h1>PROATI 2026 - Gestão de Equipamentos</h1>
+    <div>Olá, <strong id="nome-professor">{{ user.username }}</strong></div>
+</div>
+
+<div class="container">
+    <!-- Seção do Formulário -->
+    <div class="reserva-box">
+        <h3>Reservar Equipamento</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <select name="equipamento" id="carrinho" required>
+                <option value="">Qual carrinho?</option>
+                {% for e in equipamentos %}
+                    <option value="{{ e.id }}">{{ e.nome }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" id="sala" name="sala" placeholder="Qual a sala?" required>
+            <input type="text" id="horario" name="horario" placeholder="Ex: 1º Horário" required>
+            <input type="date" name="data" required>
+            
+            <!-- Alterado para type="button" para o JS interceptar sem recarregar a página se desejar -->
+            <button type="submit">Enviar para o Mural</button>
+        </form>
+    </div>
+
+    <!-- Seção do Mural -->
+    <div class="mural">
+        <h2>Mural de Reservas</h2>
+        <div class="grid-mural" id="grid-mural">
+            {% for r in reservas %}
+            <div class="card">
+                <strong>Prof. {{ r.professor.username }}</strong>
+                <p><span class="label">Equipamento:</span> {{ r.equipamento.nome }}</p>
+                <p><span class="label">Local:</span> {{ r.sala }}</p>
+                <p><span class="label">Horário:</span> {{ r.periodo }}</p>
+                <p><span class="label">Data:</span> {{ r.data_uso }}</p>
+            </div>
+            {% empty %}
+            <p>Nenhuma reserva no mural ainda.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- CONEXÃO COM O JS (Sempre ao final do body) -->
+<script src="{% static 'js/script.js' %}"></script>
+
+</body>
+</html>

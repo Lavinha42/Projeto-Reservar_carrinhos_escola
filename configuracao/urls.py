@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from reservas import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.home, name='longa'),
+    path('criar/', views.CriarConta, name='index'  ),
+    path('entrar/', views.Entrar, name='longa'),
+    path('Logar/', views.mural, name='mural' )
 ]
