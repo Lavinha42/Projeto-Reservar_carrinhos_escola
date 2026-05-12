@@ -20,8 +20,13 @@ def CriarConta(request):
         senha = request.POST.get('senha')
         confirmar = request.POST.get('confirmar_senha')
 
+        dominio_permitido = "@professor.educacao.sp.gov.br"
+
+        if not email.lower().endswith(dominio_permitido):
+            messages.error(request,f"Erro: Apenas e-mails corporativo SEDUC!")
+            return render(request,'index.html')
         # 1. Verificar se as senhas batem
-        if senha != confirmar:
+        if senha !=  confirmar:
             messages.error(request, "As senhas não coincidem!")
             return render(request, 'index.html')
 
@@ -35,7 +40,9 @@ def CriarConta(request):
         user.save()
 
         messages.success(request, "Conta criada com sucesso! Faça login.")
-        return redirect(request,'longa') # Redireciona para a tela de login
+        return render(request,'longa.html') # Redireciona para a tela de login
+    
+        
 
     return render(request, 'index.html')
 def Entrar(request):
@@ -104,21 +111,7 @@ def mural(request):
         'reservas': reservas, 
         'equipamentos': equipamentos
     })
-@login_required
-def excluir_reserva(request, reserva_id):
-    if not request.user.is_staff: # Proteção extra: se não for adm, bloqueia
-        messages.error(request, "Você não tem permissão para excluir.")
-        return redirect('mural')
 
-    reserva = get_object_or_404(Reserva, id=reserva_id)
-    reserva.delete()
-    messages.success(request, "Reserva excluída com sucesso!")
-    return redirect('mural')
-    # Busca todos os equipamentos e todas as reservas para mostrar na tela
-    quipamentos = Equipamento.objects.all()
-    reservas = Reserva.objects.all().order_by('-id') # Mais novas primeiro
-    
-    return render(request, 'mural.html', {'equipamentos': equipamentos, 'reservas': reservas})
 @login_required
 def exportar_reservas_excel(request):
 
