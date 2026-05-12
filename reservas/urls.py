@@ -11,4 +11,6 @@ urlpatterns = [
         views.exportar_reservas_excel,
         name='exportar_excel'
     ),
+    path('ajax/disponiveis/', views.listar_disponiveis, name='ajax_disponiveis'),
+    path('ajax/mural-filtrado/', views.carregar_mural, name='ajax_mural'),
 ]

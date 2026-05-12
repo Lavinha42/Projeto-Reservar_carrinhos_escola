@@ -6,7 +6,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from datetime import date
+from django.utils.timezone import now
 import openpyxl
+from django.http import JsonResponse
+
 
 
 
@@ -63,53 +66,52 @@ def Entrar(request):
     return render(request, 'longa.html')
 @login_required
 def mural(request):
-    # 1. Buscamos os equipamentos FORA do IF do POST 
-    # para que eles apareçam assim que a página carregar
-    equipamentos = Equipamento.objects.all() 
-
+    hoje = now().date()
+    
     if request.method == "POST":
         equipamento_id = request.POST.get('equipamento')
         sala = request.POST.get('sala')
-        horario = request.POST.get('horario')
-        data = request.POST.get('data')
+        periodo = request.POST.get('periodo') # Ajustado para o nome no HTML
+        data_reserva = request.POST.get('data')
 
-        # Verificação de reserva duplicada
+        # 1. Verificação de reserva duplicada (Segurança extra)
         ja_reservado = Reserva.objects.filter(
-            equipamento_id=equipamento_id, # Usando _id para ser mais direto
-            sala=sala, 
-            periodo=horario, 
-            data_uso=data
+            equipamento_id=equipamento_id, 
+            periodo=periodo, 
+            data_uso=data_reserva
         ).exists()
 
         if ja_reservado:
-            messages.error(request, "Horário já reservado!")
-            return redirect('mural')
-
-        # Cria a reserva no banco
-        try:
-            equip_obj = Equipamento.objects.get(id=equipamento_id)
-            Reserva.objects.create(
-                professor=request.user,
-                equipamento=equip_obj,
-                sala=sala,
-                periodo=horario,
-                data_uso=data
-            )
-            messages.success(request, "Reserva realizada com sucesso!")
-        except Exception as e:
-            messages.error(request, f"Erro ao salvar: {e}")
+            messages.error(request, "Este carrinho já foi reservado para este horário!")
+        else:
+            try:
+                equip_obj = Equipamento.objects.get(id=equipamento_id)
+                Reserva.objects.create(
+                    professor=request.user,
+                    equipamento=equip_obj,
+                    sala=sala,
+                    periodo=periodo,
+                    data_uso=data_reserva
+                )
+                messages.success(request, "Reserva realizada com sucesso!")
+            except Exception as e:
+                messages.error(request, f"Erro ao salvar: {e}")
         
+        # Após o POST, redirecionamos para o GET da mesma página para limpar o form
         return redirect('mural')
 
-    # 2. Buscamos as reservas para mostrar na tabela
-    reservas = Reserva.objects.filter(
-        data_uso__gte=date.today()
-    ).order_by('data_uso', 'periodo')
+    # --- Lógica do GET (Carregamento da página) ---
+    
+    # Buscamos as reservas de HOJE para o mural inicial
+    reservas_hoje = Reserva.objects.filter(data_uso=hoje).order_by('periodo')
+    
+    # Buscamos todos os equipamentos (embora o Ajax vá filtrar depois)
+    equipamentos = Equipamento.objects.all()
 
-    # 3. IMPORTANTE: Passamos tanto 'reservas' quanto 'equipamentos' para o HTML
     return render(request, 'mural.html', {
-        'reservas': reservas, 
-        'equipamentos': equipamentos
+        'reservas': reservas_hoje,
+        'equipamentos': equipamentos,
+        'hoje': hoje.strftime('%Y-%m-%d')
     })
 
 @login_required
@@ -149,3 +151,24 @@ def exportar_reservas_excel(request):
     workbook.save(response)
 
     return response
+
+def listar_disponiveis(request):
+    data_sel = request.GET.get('data')
+    periodo_sel = request.GET.get('periodo')
+    
+    # Busca IDs dos equipamentos que já têm reserva nesse dia e horário
+    ocupados = Reserva.objects.filter(
+        data_uso=data_sel, 
+        periodo=periodo_sel
+    ).values_list('equipamento_id', flat=True)
+    
+    disponiveis = Equipamento.objects.exclude(id__in=ocupados)
+    
+    data = [{'id': e.id, 'nome': e.nome} for e in disponiveis]
+    return JsonResponse({'equipamentos': data})
+
+def carregar_mural(request):
+    data_sel = request.GET.get('data')
+    reservas = Reserva.objects.filter(data_uso=data_sel).order_by('periodo')
+    # Use o caminho relativo a pasta templates
+    return render(request, 'partials/lista_reservas.html', {'reservas': reservas})
