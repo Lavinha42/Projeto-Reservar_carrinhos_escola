@@ -128,3 +128,24 @@ body {
     font-weight: bold;
     color: #7f8c8d;
 }
+
+/* Quando a largura da tela for menor que 850px (celulares e tablets) */
+@media (max-width: 850px) {
+    .container {
+        /* Muda a direção de horizontal (lado a lado) para vertical (pilha) */
+        flex-direction: column !important; 
+        padding: 10px;
+    }
+
+    .reserva-box, .mural {
+        /* Garante que ambos ocupem a largura total em telas pequenas */
+        width: 100% !important;
+        margin-bottom: 20px; /* Adiciona um espaço entre o formulário e o mural */
+        box-sizing: border-box; /* Garante que o padding não quebre a largura */
+    }
+
+    /* Opcional: Ajusta o tamanho da fonte do título em telas pequenas */
+    h1 {
+        font-size: 1.2rem;
+    }
+}

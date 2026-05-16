@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from reservas import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -7,4 +8,6 @@ urlpatterns = [
 
     
     path('', include('reservas.urls')),
+    
+    path('limpar-reservas/', views.limpar_reservas_antigas, name='limpar_reservas'),
 ]

@@ -3,6 +3,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reserva de Carrinhos - PROATI</title>
     <link rel="stylesheet" href="{% static 'css/estiloMural.css' %}">
 </head>
@@ -10,6 +11,9 @@
     {% if user.is_staff %}
     <a href="{% url 'exportar_excel' %}">
         <button>Exportar Reservas Passadas</button>
+    </a>
+    <a href="{% url 'limpar_reservas' %}" onclick="return confirm('Tem certeza? Isso apagará os dados do histórico!')">
+        <button style="background-color: red; color: white;">Limpar Histórico</button>
     </a>
     {% endif %}
 
