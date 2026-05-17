@@ -155,9 +155,9 @@ def exportar_reservas_excel(request):
 
 def limpar_reservas_antigas(request):
     if request.user.is_staff:
-        count, _ = Reserva.objects.filter(data__lt=timezone.now().date()).delete()
+        count, _ = Reserva.objects.filter(data_uso__lt=timezone.now().date()).delete()
         messages.success(request, f"{count} reservas antigas foram removidas.")
-    return redirect('nome_da_sua_view_mural') # Troque pelo nome da sua rota do mural
+    return redirect('mural')
 
 def listar_disponiveis(request):
     data_sel = request.GET.get('data')
