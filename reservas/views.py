@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Reserva, Equipamento
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -153,10 +153,17 @@ def exportar_reservas_excel(request):
 
     return response
 
-def limpar_reservas_antigas(request):
-    if request.user.is_staff:
-        count, _ = Reserva.objects.filter(data_uso__lt=timezone.now().date()).delete()
-        messages.success(request, f"{count} reservas antigas foram removidas.")
+@login_required
+def excluir_reserva(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    
+    # Verifica se o usuário é o dono da reserva ou staff
+    if request.user == reserva.professor or request.user.is_staff:
+        reserva.delete()
+        messages.success(request, "Reserva excluída com sucesso!")
+    else:
+        messages.error(request, "Você não tem permissão para excluir esta reserva.")
+            
     return redirect('mural')
 
 def listar_disponiveis(request):

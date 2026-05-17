@@ -5,6 +5,16 @@
     <p><span class="label">Local:</span> {{ r.sala }}</p>
     <p><span class="label">Horário:</span> {{ r.periodo }}</p>
     <p><span class="label">Data:</span> {{ r.data_uso|date:"d/m/Y" }}</p>
+
+    {% if user == r.professor or user.is_staff %}
+        <form method="POST" action="{% url 'excluir_reserva' r.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-excluir" 
+                    onclick="return confirm('Tem certeza que deseja excluir esta reserva?')">
+                    Excluir
+            </button>
+        </form>
+     {% endif %}
 </div>
 {% empty %}
 <p>Nenhuma reserva para este dia.</p>

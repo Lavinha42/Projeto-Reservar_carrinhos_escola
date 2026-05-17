@@ -31,6 +31,33 @@ body {
     align-items: flex-start;
 }
 
+.container-export {
+    margin-bottom: 20px;
+    text-align: right; /* Alinha o botão à direita ou esquerda conforme preferir */
+}
+
+.btn-exportar {
+    background-color: #28a745; /* Verde Excel */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none; /* Remove o sublinhado do link */
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-exportar:hover {
+    background-color: #218838; /* Verde mais escuro no hover */
+    transform: translateY(-2px); /* Efeito de elevação ao passar o mouse */
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.btn-exportar:active {
+    transform: translateY(0); /* Efeito de clique */
+}
+
 /* Caixa de Reserva (Lateral Esquerda) */
 .reserva-box {
     background: white;
@@ -106,6 +133,18 @@ body {
     border-left: 6px solid #ffc107;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     transition: transform 0.2s;
+}
+
+.btn-excluir {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background-color 0.3s;
 }
 
 .card:hover {

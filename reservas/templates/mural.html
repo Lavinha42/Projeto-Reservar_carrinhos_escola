@@ -8,21 +8,22 @@
     <link rel="stylesheet" href="{% static 'css/estiloMural.css' %}">
 </head>
 <body>
-    {% if user.is_staff %}
-    <a href="{% url 'exportar_excel' %}">
-        <button>Exportar Reservas Passadas</button>
-    </a>
-    <a href="{% url 'limpar_reservas' %}" onclick="return confirm('Tem certeza? Isso apagará os dados do histórico!')">
-        <button style="background-color: red; color: white;">Limpar Histórico</button>
-    </a>
-    {% endif %}
-
+    
     <div class="header">
         <h1>PROATI 2026 - Gestão de Equipamentos</h1>
         <div>Olá, <strong id="nome-professor">{{ user.username }}</strong></div>
     </div>
 
     <div class="container">
+        {% if user.is_staff %}
+                <div class="container-export">
+                    <a href="{% url 'exportar_excel' %}" class="btn-exportar">
+                        Exportar Reservas Passadas (Excel)
+                    </a>
+                </div>
+                {% endif %}
+
+        
         <!-- Seção do Formulário -->
         <div class="reserva-box">
             <h3>Reservar Equipamento</h3>

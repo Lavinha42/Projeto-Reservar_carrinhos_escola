@@ -9,5 +9,5 @@ urlpatterns = [
     
     path('', include('reservas.urls')),
     
-    path('limpar-reservas/', views.limpar_reservas_antigas, name='limpar_reservas'),
+    path('excluir-reserva/<int:reserva_id>/', views.excluir_reserva, name='excluir_reserva'),
 ]
