@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Reserva, Equipamento
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -9,6 +9,7 @@ from datetime import date
 from django.utils.timezone import now
 import openpyxl
 from django.http import JsonResponse
+from django.utils import timezone
 
 
 
@@ -71,10 +72,24 @@ def mural(request):
     if request.method == "POST":
         equipamento_id = request.POST.get('equipamento')
         sala = request.POST.get('sala')
-        periodo = request.POST.get('periodo') # Ajustado para o nome no HTML
+        periodo = request.POST.get('periodo') 
         data_reserva = request.POST.get('data')
 
-        # 1. Verificação de reserva duplicada (Segurança extra)
+        professor_reserva = request.user
+
+        # Nova implementação administrador, troca do nome
+
+        if request.user.is_staff and request.POST.get('professor'):
+            username_informado = request.POST.get('professor').strip()
+            try:
+                # Busca o usuário exato no banco de dados
+                professor_reserva = User.objects.get(username=username_informado)
+            except User.DoesNotExist:
+                # Se o professor digitado não existir, cancela e avisa o admin
+                messages.error(request, f"Erro: O usuário '{username_informado}' não foi encontrado!")
+                return redirect('mural')
+
+        # 1. Verificação de reserva duplicada
         ja_reservado = Reserva.objects.filter(
             equipamento_id=equipamento_id, 
             periodo=periodo, 
@@ -87,20 +102,19 @@ def mural(request):
             try:
                 equip_obj = Equipamento.objects.get(id=equipamento_id)
                 Reserva.objects.create(
-                    professor=request.user,
+                    professor=professor_reserva,
                     equipamento=equip_obj,
                     sala=sala,
                     periodo=periodo,
                     data_uso=data_reserva
                 )
-                messages.success(request, "Reserva realizada com sucesso!")
+                messages.success(request, f"Reserva realizada com sucesso para {professor_reserva.username}!")
             except Exception as e:
                 messages.error(request, f"Erro ao salvar: {e}")
         
         # Após o POST, redirecionamos para o GET da mesma página para limpar o form
         return redirect('mural')
 
-    # --- Lógica do GET (Carregamento da página) ---
     
     # Buscamos as reservas de HOJE para o mural inicial
     reservas_hoje = Reserva.objects.filter(data_uso=hoje).order_by('periodo')
@@ -151,6 +165,19 @@ def exportar_reservas_excel(request):
     workbook.save(response)
 
     return response
+
+@login_required
+def excluir_reserva(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+    
+    # Verifica se o usuário é o dono da reserva ou staff
+    if request.user == reserva.professor or request.user.is_staff:
+        reserva.delete()
+        messages.success(request, "Reserva excluída com sucesso!")
+    else:
+        messages.error(request, "Você não tem permissão para excluir esta reserva.")
+            
+    return redirect('mural')
 
 def listar_disponiveis(request):
     data_sel = request.GET.get('data')
