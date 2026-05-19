@@ -199,31 +199,3 @@ def carregar_mural(request):
     reservas = Reserva.objects.filter(data_uso=data_sel).order_by('periodo')
     # Use o caminho relativo a pasta templates
     return render(request, 'partials/lista_reservas.html', {'reservas': reservas})
-
-#1. View principal que carrega a página de entrada (Mural Geral)
-def mural_principal(request):
-    # Passamos a data de hoje formatada para preencher o ({{ hoje }}) no seu HTML
-    hoje_formatado = date.today().strftime('%d/%m/%Y')
-    
-    # Busca as reservas de hoje para o primeiro carregamento da página (Server-Side)
-    reservas_hoje = Reserva.objects.filter(data_uso=date.today()).order_by('periodo')
-    
-    contexto = {
-        'hoje': hoje_formatado,
-        'reservas': reservas_hoje
-    }
-    return render(request, 'mural_consulta.html', contexto)
-
-
-# 2. View que o JavaScript (Fetch) vai chamar a cada 30 segundos
-def carregar_mural(request):
-    data_sel = request.GET.get('data')
-    
-    # Se por acaso o JavaScript não mandar a data, usamos a de hoje por segurança
-    if not data_sel:
-        data_sel = date.today()
-        
-    reservas = Reserva.objects.filter(data_uso=data_sel).order_by('periodo')
-    
-    # Renderiza apenas o pedaço da tabela/grid
-    return render(request, 'partials/lista_reservas_consulta.html', {'reservas': reservas})

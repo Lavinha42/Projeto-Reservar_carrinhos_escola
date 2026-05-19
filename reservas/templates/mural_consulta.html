@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural de Reservas do Dia</title>
+    <link rel="stylesheet" href="{% static 'css/painel.css' %}">
+</head>
+<body>
+    
+    <div class="header">
+        <h1>PROATI 2026 - Quadro de Avisos</h1>
+        <a href="{% url 'longa' %}" class="btn-voltar">Voltar para o Início</a>
+    </div>
+
+    <div class="container">
+        <div class="mural">
+            <h2>Reservas de Hoje ({{ hoje }})</h2>
+            
+            <div class="grid-mural" id="grid-mural">
+                {% if reservas %}
+                    {% include 'partials/lista_reservas_consulta.html' %}
+                {% else %}
+                    <p style="text-align: center; padding: 20px;">Nenhum equipamento reservado para o dia de hoje até o momento.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    function autoAtualizarMuralConsulta() {
+        // Pega a data de hoje no formato AAAA-MM-DD
+        const dataHoje = new Date().toISOString().split('T')[0]; 
+        
+        // ATENÇÃO AQUI: adicionamos &consulta=true no final da URL
+        fetch(`/carregar-mural/?data=${dataHoje}&consulta=true`)
+            .then(response => response.text())
+            .then(html => {
+                const gridMural = document.getElementById('grid-mural');
+                if (gridMural) {
+                    gridMural.innerHTML = html;
+                }
+            })
+            .catch(error => console.error('Erro ao atualizar o mural:', error));
+    }
+
+    // Executa a função a cada 30 segundos
+    setInterval(autoAtualizarMuralConsulta, 30000);
+    
+    // Executa uma vez assim que a página abre para carregar o mural limpo
+    window.onload = autoAtualizarMuralConsulta;
+</script>
+</html>

@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,11 +6,6 @@
   <title>Tela de Login</title>
 
   <style>
-    /* Garante que os paddings não quebrem o tamanho total dos elementos */
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       padding: 0;
@@ -27,7 +21,7 @@
       background: white;
       padding: 40px;
       border-radius: 15px;
-      width: 340px; /* Um pouquinho mais largo para acomodar bem o layout */
+      width: 320px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
 
@@ -66,38 +60,6 @@
       background: #2196f3;
     }
 
-    /* Divisor visual elegante entre o Login e o Acesso ao Mural */
-    .divisor {
-      margin: 20px 0;
-      text-align: center;
-      border-bottom: 1px solid #eee;
-      line-height: 0.1em;
-    }
-    .divisor span {
-      background: #fff;
-      padding: 0 10px;
-      color: #999;
-      font-size: 13px;
-    }
-
-    /* Botão de Acesso ao Mural Público */
-    .btn-mural {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background-color: #2ec4b6; /* Cor verde/turquesa de destaque */
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 16px;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .btn-mural:hover {
-      background-color: #20a498;
-    }
-
     .footer {
       text-align: center;
       margin-top: 15px;
@@ -108,6 +70,20 @@
       text-decoration: none;
       color: #2196f3;
     }
+    .btn-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        margin-top: 10px;
+    }
+    .btn-link:hover {
+        background-color: #ddd;
+    }
+
   </style>
 </head>
 <body>
@@ -115,33 +91,32 @@
     <h2>Login</h2>
 
     <form method="POST" action="{% url 'longa' %}">
-        {% csrf_token %} <div class="input-box">
-            <input type="text" name="usuario" placeholder="Usuário" required>
+        {% csrf_token %} <!-- Obrigatório para segurança no Django -->
+        
+        <div class="input-box">
+        <!-- O 'name' é o que o Django usa para identificar o campo -->
+        <input type="text" name="usuario" placeholder="Usuário" required>
         </div>
 
         <div class="input-box">
-            <input type="password" name="senha" placeholder="Senha" required>
+        <input type="password" name="senha" placeholder="Senha" required>
         </div>
 
         <button type="submit" class="login-btn">Entrar</button>
 
         <div class="footer">
-            <p>Não tem conta? <a href="{% url 'index' %}">Criar conta</a></p>
+        <p>Não tem conta? <a href="{% url 'index' %}">Criar conta</a></p>
         </div>
     </form>
     
-    <div class="divisor"><span>ou</span></div>
-
-    <a href="{% url 'mural_consulta' %}" class="btn-mural">Ver Mural de Reservas</a>
-
     {% if messages %}
-        <div style="color: red; text-align: center; margin-top: 15px; font-size: 14px;">
+        <div style="color: red; text-align: center; margin-top: 10px;">
         {% for message in messages %}
             {{ message }}
         {% endfor %}
         </div>
     {% endif %}
-</div>
+    </div>
 
 </body>
 </html>
