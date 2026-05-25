@@ -6,6 +6,7 @@ class Equipamento(models.Model):
     nome = models.CharField("Nome do Carrinho", max_length=100)
     tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
     disponivel = models.BooleanField(default=True) # Corrigido
+    quantidade = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.nome} ({self.get_tipo_display()})"

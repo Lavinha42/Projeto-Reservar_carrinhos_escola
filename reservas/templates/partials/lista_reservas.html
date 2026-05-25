@@ -2,6 +2,7 @@
 <div class="card">
     <strong>Prof. {{ r.professor.username }}</strong>
     <p><span class="label">Equipamento:</span> {{ r.equipamento.nome }}</p>
+    <p><span class="label">Quantidade Atual:</span>{{ r.equipamento.quantidade }}</p>
     <p><span class="label">Local:</span> {{ r.sala }}</p>
     <p><span class="label">Horário:</span> {{ r.periodo }}</p>
     <p><span class="label">Data:</span> {{ r.data_uso|date:"d/m/Y" }}</p>

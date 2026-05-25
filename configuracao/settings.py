@@ -59,7 +59,7 @@ ROOT_URLCONF = 'configuracao.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'reservas/static')],
+        'DIRS': [os.path.join(BASE_DIR,'static')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,6 +114,8 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 
 USE_TZ = True
+
+LOGIN_URL = '/entrar/'
 
 
 # Static files (CSS, JavaScript, Images)

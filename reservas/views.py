@@ -68,8 +68,24 @@ def Entrar(request):
 @login_required
 def mural(request):
     hoje = now().date()
-    
     if request.method == "POST":
+
+        # ATUALIZAR QUANTIDADE DOS EQUIPAMENTOS
+
+        if request.user.is_staff and request.POST.get('equipamento_id'):
+
+            equipamento = Equipamento.objects.get(
+                id=request.POST.get('equipamento_id')
+            )
+
+            equipamento.quantidade = request.POST.get('quantidade')
+
+            equipamento.save()
+
+            messages.success(request, "Quantidade atualizada com sucesso!")
+
+            return redirect('mural')
+
         equipamento_id = request.POST.get('equipamento')
         sala = request.POST.get('sala')
         periodo = request.POST.get('periodo') 
@@ -183,16 +199,19 @@ def listar_disponiveis(request):
     data_sel = request.GET.get('data')
     periodo_sel = request.GET.get('periodo')
     
-    # Busca IDs dos equipamentos que já têm reserva nesse dia e horário
-    ocupados = Reserva.objects.filter(
-        data_uso=data_sel, 
-        periodo=periodo_sel
-    ).values_list('equipamento_id', flat=True)
+    try:
+        ocupados = Reserva.objects.filter(
+            data_uso=data_sel, 
+            periodo=periodo_sel
+        ).values_list('equipamento_id', flat=True)
+        
+        disponiveis = Equipamento.objects.exclude(id__in=ocupados)
+        
+        data = [{'id': e.id, 'nome': e.nome, 'quantidade': e.quantidade} for e in disponiveis]
+        return JsonResponse({'equipamentos': data})
     
-    disponiveis = Equipamento.objects.exclude(id__in=ocupados)
-    
-    data = [{'id': e.id, 'nome': e.nome} for e in disponiveis]
-    return JsonResponse({'equipamentos': data})
+    except Exception as e:
+        return JsonResponse({'erro': str(e)}, status=500)
 
 def carregar_mural(request):
     data_sel = request.GET.get('data')
