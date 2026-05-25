@@ -5,7 +5,199 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reserva de Carrinhos - PROATI</title>
-    <link rel="stylesheet" href="{% static 'css/estiloMural.css' %}">
+<style>
+    /* Configurações Gerais */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+/* Cabeçalho */
+.header {
+    background-color: #1e3a5f;
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header h1 { margin: 0; font-size: 24px; }
+
+/* Layout Principal */
+.container {
+    display: flex;
+    flex-direction: row; /* Alinha formulário e mural lado a lado */
+    gap: 30px;
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+.container-export {
+    margin-bottom: 20px;
+    text-align: right; /* Alinha o botão à direita ou esquerda conforme preferir */
+}
+
+.btn-exportar {
+    background-color: #28a745; /* Verde Excel */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none; /* Remove o sublinhado do link */
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-exportar:hover {
+    background-color: #218838; /* Verde mais escuro no hover */
+    transform: translateY(-2px); /* Efeito de elevação ao passar o mouse */
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.btn-exportar:active {
+    transform: translateY(0); /* Efeito de clique */
+}
+
+/* Caixa de Reserva (Lateral Esquerda) */
+.reserva-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 350px;
+    flex-shrink: 0; /* Impede que o formulário diminua */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.reserva-box h3 {
+    margin-top: 0;
+    color: #1e3a5f;
+    border-bottom: 2px solid #eef0f2;
+    padding-bottom: 10px;
+}
+
+.reserva-box input, 
+.reserva-box select {
+    width: 100%;
+    margin: 12px 0;
+    padding: 12px;
+    border: 1.5px solid #dce1e7;
+    border-radius: 8px;
+    box-sizing: border-box; /* Garante que o padding não quebre a largura */
+    font-size: 14px;
+}
+
+.reserva-box button {
+    width: 100%;
+    padding: 14px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 16px;
+}
+
+.reserva-box button:hover {
+    background-color: #218838;
+}
+
+/* Mural de Reservas (Área Ampla Direita) */
+.mural {
+    flex-grow: 1; /* Ocupa todo o espaço restante */
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    min-height: 80vh;
+}
+
+.mural h2 {
+    color: #1e3a5f;
+    margin-bottom: 25px;
+}
+
+/* Grid dos Cards */
+.grid-mural {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Cards lado a lado que se ajustam sozinhos */
+    gap: 20px;
+}
+
+/* Estilo do Card individual */
+.card {
+    background: #fffdf2;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 6px solid #ffc107;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.btn-excluir {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card strong {
+    font-size: 18px;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.card p {
+    margin: 5px 0;
+    font-size: 15px;
+}
+
+.card .label {
+    font-weight: bold;
+    color: #7f8c8d;
+}
+
+/* Quando a largura da tela for menor que 850px (celulares e tablets) */
+@media (max-width: 850px) {
+    .container {
+        /* Muda a direção de horizontal (lado a lado) para vertical (pilha) */
+        flex-direction: column !important; 
+        padding: 10px;
+    }
+
+    .reserva-box, .mural {
+        /* Garante que ambos ocupem a largura total em telas pequenas */
+        width: 100% !important;
+        margin-bottom: 20px; /* Adiciona um espaço entre o formulário e o mural */
+        box-sizing: border-box; /* Garante que o padding não quebre a largura */
+    }
+
+    /* Opcional: Ajusta o tamanho da fonte do título em telas pequenas */
+    h1 {
+        font-size: 1.2rem;
+    }
+}
+</style>
+    
 </head>
 <body>
     
