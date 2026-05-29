@@ -102,6 +102,9 @@ DATABASES = {
         ssl_require=True
         )
     }
+
+load_dotenv()
+print("DATABASE_URL:", os.getenv('DATABASE_URL'))  # linha de debug
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
