@@ -31,7 +31,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridMural = document.getElementById('grid-mural');
     const infoQuantidade = document.getElementById('quantidade-info');
 
-    
+    function desabilitarHorariosPassados() {
+            const dataInput = campoData.value;
+            const hoje = new Date().toISOString().split('T')[0];
+            const agora = new Date();
+            const horaAtual = agora.getHours();
+            const minAtual = agora.getMinutes();
+
+            const options = campoPeriodo.querySelectorAll('option');
+            options.forEach(opt => {
+                // Verifica se a opção tem um valor de horário (ignora o "Selecione o Horário")
+                if (opt.value && opt.value.includes('|')) {
+                    const [hInicio] = opt.value.split('|');
+                    const [h, m] = hInicio.split(':').map(Number);
+                    
+                    // Se for hoje E o horário já passou, desabilita
+                    if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                        opt.disabled = true;
+                    } else {
+                        opt.disabled = false;
+                    }
+                }
+            });
+        }
 
     function atualizarMural() {
         const dataSelecionada = campoData.value;
@@ -82,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             selectCarrinho.innerHTML = '<option value="">Selecione data e período...</option>';
         }
     }
+    
 
     selectCarrinho.addEventListener('change', function () {
         const valorSelecionado = selectCarrinho.value;
@@ -105,10 +128,11 @@ document.addEventListener('DOMContentLoaded', function () {
         definirHorarios();
         atualizarCarrinhos();
     });
-
+    desabilitarHorariosPassados();
     campoData.addEventListener('change', () => {
         atualizarMural();
         atualizarCarrinhos();
+        desabilitarHorariosPassados();
     });
     window.definirHorarios = definirHorarios;
     atualizarMural();

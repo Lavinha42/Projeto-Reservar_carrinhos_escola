@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -25,9 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = [ 'localhost','127.0.0.1','lvh.me']
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'lvh.me', os.getenv('RENDER_EXTERNAL_HOSTNAME', '')]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -48,6 +50,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # para servir arquivos estáticos em produção
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -83,18 +86,21 @@ CSRF_TRUSTED_ORIGINS = [
     'http://lvh.me',
     'http://lvh.me:8000',
 ]
+render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME', '')
+if render_host:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{render_host}')
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
+DATABASES = {
+     'default': dj_database_url.config(
+         default=os.getenv('DATABASE_URL'),
+         conn_max_age=600,
+   )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -133,15 +139,16 @@ LOGIN_URL = '/entrar/'
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'reservas','static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'reservas', 'static')]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Segurança extra
-#IS_PRODUCTION = os.getenv('IS_PRODUCTION', 'False') == 'True'
+IS_PRODUCTION = os.getenv('IS_PRODUCTION', 'False') == 'True'
 
-#if IS_PRODUCTION:
-#   SECURE_SSL_REDIRECT = True
-#    SESSION_COOKIE_SECURE = True
-#   CSRF_COOKIE_SECURE = True
-#   SECURE_HSTS_SECONDS = 31536000
-#    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-#   SECURE_HSTS_PRELOAD = True
+if IS_PRODUCTION:
+   SECURE_SSL_REDIRECT = True
+   SESSION_COOKIE_SECURE = True
+   CSRF_COOKIE_SECURE = True
+   SECURE_HSTS_SECONDS = 31536000
+   SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+   SECURE_HSTS_PRELOAD = True

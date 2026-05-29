@@ -77,14 +77,10 @@ def mural(request):
     data_selecionada = data_param if data_param else hoje.strftime('%Y-%m-%d')
 
     if request.method == "POST":
-
-        if request.user.is_staff and request.POST.get('equipamento_id'):
-            equipamento = Equipamento.objects.get(id=request.POST.get('equipamento_id'))
-            equipamento.quantidade = request.POST.get('quantidade')
-            equipamento.save()
-            messages.success(request, "Quantidade atualizada com sucesso!")
-            return redirect('mural')
-
+        data_reserva_str = request.POST.get('data')
+        horario_inicio_str = request.POST.get('horario_inicio')
+        data_reservae = datetime.strptime(data_reserva_str, '%Y-%m-%d').date()
+        hora_inicioe = datetime.strptime(horario_inicio_str, '%H:%M').time()
         equipamento_id = request.POST.get('equipamento')
         sala = request.POST.get('sala')
         horario_inicio = request.POST.get('horario_inicio')
@@ -92,6 +88,11 @@ def mural(request):
         data_reserva = request.POST.get('data')
 
         professor_reserva = request.user
+
+        if data_reservae == timezone.now().date() and hora_inicioe < timezone.now().time():
+            messages.error(request, "Este horário já passou e não pode ser reservado!")
+            return redirect('mural')
+
 
         if request.user.is_staff and request.POST.get('professor'):
             username_informado = request.POST.get('professor').strip()
@@ -142,9 +143,17 @@ def mural(request):
 
 @login_required
 def exportar_reservas_excel(request):
+    agora = timezone.localtime(timezone.now())
+    hoje = agora.date()
+    hora_atual = agora.time()
     reservas_passadas = Reserva.objects.filter(
-        data_uso__lt=date.today()
-    ).order_by('-data_uso')
+        data_uso__lt=hoje
+    ).union(
+        Reserva.objects.filter(
+            data_uso = hoje,
+            horario_fim__lte = hora_atual
+        )
+    ).order_by('-data_uso','-horario_fim')
 
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
