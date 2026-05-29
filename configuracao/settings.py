@@ -99,9 +99,8 @@ DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
         conn_max_age=600,
-        ssl_require=True
-        )
-    }
+    )
+}
 
 load_dotenv()
 print("DATABASE_URL:", os.getenv('DATABASE_URL'))  # linha de debug
