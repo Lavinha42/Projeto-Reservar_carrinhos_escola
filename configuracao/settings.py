@@ -94,12 +94,11 @@ if render_host:
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-
 DATABASES = {
-     'default': dj_database_url.config(
-         default=os.getenv('DATABASE_URL'),
-         conn_max_age=600,
-   )
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600,
+    )
 }
 
 # Password validation
