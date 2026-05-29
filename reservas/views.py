@@ -1,3 +1,6 @@
+import re
+from urllib import request
+
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Reserva, Equipamento
 from django.contrib.auth.decorators import login_required
@@ -6,19 +9,17 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from datetime import date
-from django.utils.timezone import now
+from django.utils.timezone import datetime, now
 import openpyxl
 from django.http import JsonResponse
 from django.utils import timezone
 
 
-
-
 def home(request):
     return render(request, 'longa.html')
+
 def CriarConta(request):
     if request.method == "POST":
-        # Pegando os dados do formulário
         usuario = request.POST.get('usuario')
         email = request.POST.get('email')
         senha = request.POST.get('senha')
@@ -27,89 +28,84 @@ def CriarConta(request):
         dominio_permitido = "@professor.educacao.sp.gov.br"
 
         if not email.lower().endswith(dominio_permitido):
-            messages.error(request,f"Erro: Apenas e-mails corporativo SEDUC!")
-            return render(request,'index.html')
-        # 1. Verificar se as senhas batem
-        if senha !=  confirmar:
+            messages.error(request, f"Erro: Apenas e-mails corporativo SEDUC!")
+            return render(request, 'index.html')
+
+        if senha != confirmar:
             messages.error(request, "As senhas não coincidem!")
             return render(request, 'index.html')
 
-        # 2. Verificar se o usuário já existe no banco
         if User.objects.filter(username=usuario).exists():
             messages.error(request, "Este nome de usuário já está em uso.")
             return render(request, 'index.html')
 
-        # 3. Criar o usuário no banco de dados
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Este email esta em uso.")
+            return render(request, 'index.html')
+
         user = User.objects.create_user(username=usuario, email=email, password=senha)
         user.save()
 
         messages.success(request, "Conta criada com sucesso! Faça login.")
-        return render(request,'longa.html') # Redireciona para a tela de login
-    
-        
+        return render(request, 'longa.html')
 
     return render(request, 'index.html')
+
 def Entrar(request):
     if request.method == "POST":
         usuario_digitado = request.POST.get('usuario')
         senha_digitada = request.POST.get('senha')
 
-        # Verifica no banco de dados se o usuário e senha batem
         user = authenticate(request, username=usuario_digitado, password=senha_digitada)
 
         if user is not None:
             login(request, user)
-            return redirect('mural') # Redireciona para o mural após o login
+            return redirect('mural')
         else:
             messages.error(request, "Usuário ou senha incorretos!")
             return render(request, 'longa.html')
 
     return render(request, 'longa.html')
-@login_required
+
+@login_required  # ← CORREÇÃO: removido @login_required duplicado
 def mural(request):
     hoje = now().date()
+    hora_atual = datetime.now().time()
+
+    # pega a data da URL se existir, senão usa hoje
+    data_param = request.GET.get('data')
+    data_selecionada = data_param if data_param else hoje.strftime('%Y-%m-%d')
+
     if request.method == "POST":
 
-        # ATUALIZAR QUANTIDADE DOS EQUIPAMENTOS
-
         if request.user.is_staff and request.POST.get('equipamento_id'):
-
-            equipamento = Equipamento.objects.get(
-                id=request.POST.get('equipamento_id')
-            )
-
+            equipamento = Equipamento.objects.get(id=request.POST.get('equipamento_id'))
             equipamento.quantidade = request.POST.get('quantidade')
-
             equipamento.save()
-
             messages.success(request, "Quantidade atualizada com sucesso!")
-
             return redirect('mural')
 
         equipamento_id = request.POST.get('equipamento')
         sala = request.POST.get('sala')
-        periodo = request.POST.get('periodo') 
+        horario_inicio = request.POST.get('horario_inicio')
+        horario_fim = request.POST.get('horario_fim')
         data_reserva = request.POST.get('data')
 
         professor_reserva = request.user
 
-        # Nova implementação administrador, troca do nome
-
         if request.user.is_staff and request.POST.get('professor'):
             username_informado = request.POST.get('professor').strip()
             try:
-                # Busca o usuário exato no banco de dados
                 professor_reserva = User.objects.get(username=username_informado)
             except User.DoesNotExist:
-                # Se o professor digitado não existir, cancela e avisa o admin
                 messages.error(request, f"Erro: O usuário '{username_informado}' não foi encontrado!")
                 return redirect('mural')
 
-        # 1. Verificação de reserva duplicada
         ja_reservado = Reserva.objects.filter(
-            equipamento_id=equipamento_id, 
-            periodo=periodo, 
-            data_uso=data_reserva
+            equipamento_id=equipamento_id,
+            data_uso=data_reserva,
+            horario_inicio=horario_inicio,
+            horario_fim=horario_fim
         ).exists()
 
         if ja_reservado:
@@ -121,32 +117,31 @@ def mural(request):
                     professor=professor_reserva,
                     equipamento=equip_obj,
                     sala=sala,
-                    periodo=periodo,
+                    horario_inicio=horario_inicio,
+                    horario_fim=horario_fim,
                     data_uso=data_reserva
                 )
                 messages.success(request, f"Reserva realizada com sucesso para {professor_reserva.username}!")
             except Exception as e:
                 messages.error(request, f"Erro ao salvar: {e}")
-        
-        # Após o POST, redirecionamos para o GET da mesma página para limpar o form
-        return redirect('mural')
 
-    
-    # Buscamos as reservas de HOJE para o mural inicial
-    reservas_hoje = Reserva.objects.filter(data_uso=hoje).order_by('periodo')
-    
-    # Buscamos todos os equipamentos (embora o Ajax vá filtrar depois)
+        return redirect(f"/Logar/?data={data_reserva}")
+
+    reservas_hoje = Reserva.objects.filter(
+        data_uso=hoje,
+        horario_fim__gte=hora_atual
+    ).order_by('horario_inicio')
+
     equipamentos = Equipamento.objects.all()
 
     return render(request, 'mural.html', {
         'reservas': reservas_hoje,
         'equipamentos': equipamentos,
-        'hoje': hoje.strftime('%Y-%m-%d')
+        'hoje': data_selecionada,
     })
 
 @login_required
 def exportar_reservas_excel(request):
-
     reservas_passadas = Reserva.objects.filter(
         data_uso__lt=date.today()
     ).order_by('-data_uso')
@@ -155,94 +150,114 @@ def exportar_reservas_excel(request):
     worksheet = workbook.active
     worksheet.title = "Reservas Passadas"
 
-    worksheet.append([
-        'Professor',
-        'Equipamento',
-        'Sala',
-        'Periodo',
-        'Data'
-    ])
+    worksheet.append(['Professor', 'Equipamento', 'Sala', 'Horário', 'Data'])
 
     for reserva in reservas_passadas:
         worksheet.append([
             reserva.professor.username,
             reserva.equipamento.nome,
             reserva.sala,
-            reserva.periodo,
+            f"{reserva.horario_inicio} - {reserva.horario_fim}",  # ← CORREÇÃO
             str(reserva.data_uso)
         ])
 
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-
     response['Content-Disposition'] = 'attachment; filename=reservas_passadas.xlsx'
-
     workbook.save(response)
-
     return response
 
 @login_required
 def excluir_reserva(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id)
-    
-    # Verifica se o usuário é o dono da reserva ou staff
+
     if request.user == reserva.professor or request.user.is_staff:
         reserva.delete()
         messages.success(request, "Reserva excluída com sucesso!")
     else:
         messages.error(request, "Você não tem permissão para excluir esta reserva.")
-            
+
     return redirect('mural')
 
 def listar_disponiveis(request):
     data_sel = request.GET.get('data')
-    periodo_sel = request.GET.get('periodo')
-    
+    horario_inicio_sel = request.GET.get('horario_inicio')
+    horario_fim_sel = request.GET.get('horario_fim')
+
     try:
         ocupados = Reserva.objects.filter(
-            data_uso=data_sel, 
-            periodo=periodo_sel
+            data_uso=data_sel,
+            horario_inicio=horario_inicio_sel,
+            horario_fim=horario_fim_sel
         ).values_list('equipamento_id', flat=True)
-        
+
         disponiveis = Equipamento.objects.exclude(id__in=ocupados)
-        
         data = [{'id': e.id, 'nome': e.nome, 'quantidade': e.quantidade} for e in disponiveis]
         return JsonResponse({'equipamentos': data})
-    
+
     except Exception as e:
         return JsonResponse({'erro': str(e)}, status=500)
 
+# ← CORREÇÃO: apenas uma função carregar_mural, com filtro automático por horário
+# Mural do professor (com botão excluir)
 def carregar_mural(request):
     data_sel = request.GET.get('data')
-    reservas = Reserva.objects.filter(data_uso=data_sel).order_by('periodo')
-    # Use o caminho relativo a pasta templates
-    return render(request, 'partials/lista_reservas.html', {'reservas': reservas})
 
-#1. View principal que carrega a página de entrada (Mural Geral)
-def mural_principal(request):
-    # Passamos a data de hoje formatada para preencher o ({{ hoje }}) no seu HTML
-    hoje_formatado = date.today().strftime('%d/%m/%Y')
-    
-    # Busca as reservas de hoje para o primeiro carregamento da página (Server-Side)
-    reservas_hoje = Reserva.objects.filter(data_uso=date.today()).order_by('periodo')
-    
-    contexto = {
-        'hoje': hoje_formatado,
-        'reservas': reservas_hoje
-    }
-    return render(request, 'mural_consulta.html', contexto)
-
-
-# 2. View que o JavaScript (Fetch) vai chamar a cada 30 segundos
-def carregar_mural(request):
-    data_sel = request.GET.get('data')
-    
-    # Se por acaso o JavaScript não mandar a data, usamos a de hoje por segurança
     if not data_sel:
         data_sel = date.today()
-        
-    reservas = Reserva.objects.filter(data_uso=data_sel).order_by('periodo')
-    
-    # Renderiza apenas o pedaço da tabela/grid
+
+    hora_atual = datetime.now().time()
+    hoje = date.today()
+
+    if str(data_sel) == str(hoje):
+        reservas = Reserva.objects.filter(
+            data_uso=data_sel,
+            horario_fim__gte=hora_atual
+        ).order_by('horario_inicio')
+    else:
+        reservas = Reserva.objects.filter(
+            data_uso=data_sel
+        ).order_by('horario_inicio')
+
+    return render(request, 'partials/lista_reservas.html', {
+        'reservas': reservas,
+        'user': request.user,  # ✅ passa o usuário logado
+    })
+
+
+# Mural público (sem botão excluir)
+def carregar_mural_publico(request):
+    data_sel = request.GET.get('data')
+
+    if not data_sel:
+        data_sel = date.today()
+
+    hora_atual = datetime.now().time()
+    hoje = date.today()
+
+    if str(data_sel) == str(hoje):
+        reservas = Reserva.objects.filter(
+            data_uso=data_sel,
+            horario_fim__gte=hora_atual
+        ).order_by('horario_inicio')
+    else:
+        reservas = Reserva.objects.filter(
+            data_uso=data_sel
+        ).order_by('horario_inicio')
+
     return render(request, 'partials/lista_reservas_consulta.html', {'reservas': reservas})
+
+def mural_principal(request):
+    hoje = date.today()
+    hora_atual = datetime.now().time()
+    
+    reservas_hoje = Reserva.objects.filter(
+        data_uso=hoje,
+        horario_fim__gte=hora_atual
+    ).order_by('horario_inicio')
+
+    return render(request, 'mural_consulta.html', {
+        'hoje': hoje.strftime('%d/%m/%Y'),
+        'reservas': reservas_hoje
+    })

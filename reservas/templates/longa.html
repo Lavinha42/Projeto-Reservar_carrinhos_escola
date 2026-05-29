@@ -14,7 +14,8 @@
     <h2>Login</h2>
 
     <form method="POST" action="{% url 'longa' %}">
-        {% csrf_token %} <div class="input-box">
+        {% csrf_token %} 
+        <div class="input-box">
             <input type="text" name="usuario" placeholder="Usuário" required>
         </div>
 

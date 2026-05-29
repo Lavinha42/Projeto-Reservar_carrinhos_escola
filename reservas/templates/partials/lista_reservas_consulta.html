@@ -1,16 +1,16 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/carrinho_consulta.css' %}">
 {% for r in reservas %}
 <div class="card-reserva">
     <div class="card-header-reserva">
         <strong class="prof-nome">Prof. {{ r.professor.username }}</strong>
-        <span class="badge-horario">{{ r.periodo }}</span>
+        <span class="badge-horario">{{ r.horario_inicio }} - {{ r.horario_fim }}</span>
     </div>
 
     <div class="card-body-reserva">
         <div class="destaque-equipamento">
             <span class="label">Equipamento:</span>
-            <span class="equipamento-nome">{{ r.equipamento.nome }}</span><p><span class="label">Quantidade:</span>{{ r.equipamento.quantidade }}</p>
+            <span class="equipamento-nome">{{ r.equipamento.nome }}</span>
+            <p><span class="label">Quantidade:</span> {{ r.equipamento.quantidade }}</p>
         </div>
         <p><span class="label">Local:</span> {{ r.sala }}</p>
     </div>

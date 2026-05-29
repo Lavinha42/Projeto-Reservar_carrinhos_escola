@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ 'localhost','127.0.0.1']
+ALLOWED_HOSTS = [ 'localhost','127.0.0.1','lvh.me']
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'reservas',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -72,6 +73,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'configuracao.wsgi.application'
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://seusite.escola.local',
+    'http://192.168.1.100',
+    'http://lvh.me',
+    'http://lvh.me:8000',
+]
 
 
 # Database
@@ -122,5 +133,15 @@ LOGIN_URL = '/entrar/'
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'reservas','static')]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Segurança extra
+#IS_PRODUCTION = os.getenv('IS_PRODUCTION', 'False') == 'True'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+#if IS_PRODUCTION:
+#   SECURE_SSL_REDIRECT = True
+#    SESSION_COOKIE_SECURE = True
+#   CSRF_COOKIE_SECURE = True
+#   SECURE_HSTS_SECONDS = 31536000
+#    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#   SECURE_HSTS_PRELOAD = True
