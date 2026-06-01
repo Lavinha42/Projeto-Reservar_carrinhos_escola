@@ -95,15 +95,20 @@ if render_host:
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-#palpalplaplplplas coreecto
+# Tenta ler a variável que o Railway injeta
+db_url = os.environ.get('DATABASE_URL')
+
+# Se por acaso a variável estiver vazia, tenta buscar pelo nome do serviço do Railway
+if not db_url:
+    db_url = os.environ.get('POSTGRES_URL') # Nome alternativo comum
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')),
+        default=db_url,
         conn_max_age=600,
-        ssl_require=True, # Necessário para o Postgres do Railway
+        ssl_require=True
     )
 }
-# Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
