@@ -1,9 +1,0 @@
-{
-  "build": {
-    "builder": "NIXPACKS"
-  },
-  "deploy": {
-    "startCommand": "/opt/venv/bin/python manage.py migrate && /opt/venv/bin/gunicorn configuracao.wsgi:application",
-    "restartPolicyType": "ON_FAILURE"
-  }
-}
