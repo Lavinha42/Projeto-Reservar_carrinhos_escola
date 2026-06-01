@@ -94,7 +94,7 @@ if render_host:
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-#palpalplaplplplas
+#palpalplaplplplas coreecto
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
