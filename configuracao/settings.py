@@ -99,9 +99,14 @@ if render_host:
 # Tenta ler a variável que o Railway injeta
 db_url = os.environ.get('DATABASE_URL')
 
-# Se por acaso a variável estiver vazia, tenta buscar pelo nome do serviço do Railway
 if not db_url:
-    db_url = os.environ.get('POSTGRES_URL') # Nome alternativo comum
+    pghost = os.environ.get('PGHOST')
+    pguser = os.environ.get('PGUSER') 
+    pgpass = os.environ.get('PGPASSWORD')
+    pgdb = os.environ.get('PGDATABASE')
+    pgport = os.environ.get('PGPORT', '5432')
+    if pghost:
+        db_url = f"postgresql://{pguser}:{pgpass}@{pghost}:{pgport}/{pgdb}"
 
 DATABASES = {
     'default': dj_database_url.config(
