@@ -16,9 +16,6 @@ import dj_database_url
 import os
 from dotenv import load_dotenv
 load_dotenv(override=False)
-
-import logging
-logging.basicConfig(level=logging.DEBUG)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -100,23 +97,15 @@ if render_host:
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # Tenta ler a variável que o Railway injeta
-db_url = os.environ.get('DATABASE_URL') or \
-         os.environ.get('POSTGRES_URL')
+db_url = os.environ.get('DATABASE_URL')
 
+# Se por acaso a variável estiver vazia, tenta buscar pelo nome do serviço do Railway
 if not db_url:
-    PGHOST = os.environ.get('PGHOST', '')
-    PGUSER = os.environ.get('PGUSER', '')
-    PGPASSWORD = os.environ.get('PGPASSWORD', '')
-    PGDATABASE = os.environ.get('PGDATABASE', '')
-    PGPORT = os.environ.get('PGPORT', '5432')
-    if PGHOST:
-        db_url = f"postgresql://{PGUSER}:{PGPASSWORD}@{PGHOST}:{PGPORT}/{PGDATABASE}"
-
-print(f"DATABASE_URL final: {db_url[:30] if db_url else 'VAZIO'}")
+    db_url = os.environ.get('POSTGRES_URL') # Nome alternativo comum
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=db_url or 'sqlite:///db.sqlite3',
+        default=db_url,
         conn_max_age=600,
     )
 }
