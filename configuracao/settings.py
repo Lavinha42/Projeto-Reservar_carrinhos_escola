@@ -86,6 +86,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://192.168.1.100',
     'http://lvh.me',
     'http://lvh.me:8000',
+    'https://*.railway.app',
 ]
 render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME', '')
 if render_host:
@@ -106,7 +107,6 @@ DATABASES = {
     'default': dj_database_url.config(
         default=db_url,
         conn_max_age=600,
-        ssl_require=True
     )
 }
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
