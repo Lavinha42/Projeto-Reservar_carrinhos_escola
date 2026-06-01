@@ -241,7 +241,7 @@ def carregar_mural_publico(request):
     if not data_sel:
         data_sel = date.today()
 
-    hora_atual = tamizone.now().time()
+    hora_atual = timizone.now().time()
     hoje = date.today()
 
     if str(data_sel) == str(hoje):
