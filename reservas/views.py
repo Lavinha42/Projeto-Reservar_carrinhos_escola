@@ -10,7 +10,7 @@ from django.utils.timezone import datetime, now
 import openpyxl
 from django.http import JsonResponse
 from django.utils import timezone
-#novo
+#novokkk
 
 def home(request):
     return render(request, 'longa.html')
