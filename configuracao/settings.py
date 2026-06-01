@@ -64,7 +64,7 @@ ROOT_URLCONF = 'configuracao.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'static')],
+        'DIRS': [os.path.join(BASE_DIR,'reservas','templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
