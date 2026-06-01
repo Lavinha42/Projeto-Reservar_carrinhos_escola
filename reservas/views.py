@@ -69,9 +69,10 @@ def Entrar(request):
 
 @login_required  # ← CORREÇÃO: removido @login_required duplicado
 def mural(request):
-    hoje = now().date()
-    hora_atual = datetime.now().time()
-
+    agora = timezone.localtime(timezone.now()) 
+    hoje = agora.date()
+    hora_atual = agora.time()
+    
     # pega a data da URL se existir, senão usa hoje
     data_param = request.GET.get('data')
     data_selecionada = data_param if data_param else hoje.strftime('%Y-%m-%d')
@@ -89,7 +90,7 @@ def mural(request):
 
         professor_reserva = request.user
 
-        if data_reservae == timezone.now().date() and hora_inicioe < timezone.now().time():
+        if data_reservae == hoje and hora_inicioe < hora_atual:
             messages.error(request, "Este horário já passou e não pode ser reservado!")
             return redirect('mural')
 

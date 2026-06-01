@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','q*x86e^ngva!1$gq8iix6wot$s9+$5f2dxc8mr73y98e2c!g3p')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -97,7 +97,7 @@ if render_host:
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
+        default=os.enviro.get('DATABASE_URL'),
         conn_max_age=600,
     )
 }

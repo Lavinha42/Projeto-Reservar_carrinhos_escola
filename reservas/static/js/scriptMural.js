@@ -32,28 +32,356 @@ document.addEventListener('DOMContentLoaded', function () {
     const infoQuantidade = document.getElementById('quantidade-info');
 
     function desabilitarHorariosPassados() {
-            const dataInput = campoData.value;
-            const hoje = new Date().toISOString().split('T')[0];
-            const agora = new Date();
-            const horaAtual = agora.getHours();
-            const minAtual = agora.getMinutes();
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
 
-            const options = campoPeriodo.querySelectorAll('option');
-            options.forEach(opt => {
-                // Verifica se a opção tem um valor de horário (ignora o "Selecione o Horário")
-                if (opt.value && opt.value.includes('|')) {
-                    const [hInicio] = opt.value.split('|');
-                    const [h, m] = hInicio.split(':').map(Number);
-                    
-                    // Se for hoje E o horário já passou, desabilita
-                    if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
-                        opt.disabled = true;
-                    } else {
-                        opt.disabled = false;
-                    }
-                }
-            });
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
         }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}function desabilitarHorariosPassados() {
+    const dataInput = campoData.value;
+    
+    // Obter data e hora atuais especificamente em Brasília
+    const agoraBrasil = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+    const dataAtualBrasil = new Date(agoraBrasil);
+    
+    const hoje = dataAtualBrasil.toISOString().split('T')[0];
+    const horaAtual = dataAtualBrasil.getHours();
+    const minAtual = dataAtualBrasil.getMinutes();
+
+    const options = campoPeriodo.querySelectorAll('option');
+    options.forEach(opt => {
+        if (opt.value && opt.value.includes('|')) {
+            const [hInicio] = opt.value.split('|');
+            const [h, m] = hInicio.split(':').map(Number);
+            
+            // Lógica de comparação permanece a mesma, mas agora usa os valores de Brasília
+            if (dataInput === hoje && (h < horaAtual || (h === horaAtual && m < minAtual))) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        }
+    });
+}
 
     function atualizarMural() {
         const dataSelecionada = campoData.value;
