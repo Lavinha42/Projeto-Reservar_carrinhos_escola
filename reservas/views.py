@@ -268,3 +268,5 @@ def mural_principal(request):
         'hoje': hoje.strftime('%d/%m/%Y'),
         'reservas': reservas_hoje
     })
+
+#1
