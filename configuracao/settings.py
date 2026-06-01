@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','q*x86e^ngva!1$gq8iix6wot$s9+$5f
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'lvh.me', os.getenv('RENDER_EXTERNAL_HOSTNAME', '')]
+ALLOWED_HOSTS = ['*','.railway.app']
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -97,7 +97,7 @@ if render_host:
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.enviro.get('DATABASE_URL'),
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600,
     )
 }
