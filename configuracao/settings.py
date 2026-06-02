@@ -83,7 +83,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1',
     'http://seusite.escola.local',
     'http://192.168.1.100',
-    'http://lvh.me',
+    'https://*.up.railway.app',
     'http://lvh.me:8000',
     'https://projeto-reservarcarrinhosescola-production-0586.up.railway.app/',
 ]
