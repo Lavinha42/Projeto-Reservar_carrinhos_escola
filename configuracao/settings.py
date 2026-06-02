@@ -85,7 +85,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://192.168.1.100',
     'http://lvh.me',
     'http://lvh.me:8000',
-    'projeto-reservarcarrinhosescola-production.up.railway.app',
+    'https://projeto-reservarcarrinhosescola-production-0586.up.railway.app/',
 ]
 render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME', '')
 if render_host:
