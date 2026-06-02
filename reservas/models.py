@@ -15,8 +15,8 @@ class Reserva(models.Model):
     professor = models.ForeignKey(User, on_delete=models.CASCADE)
     equipamento = models.ForeignKey(Equipamento, on_delete=models.CASCADE)
     data_uso = models.DateField("Data da Reserva")
-    horario_inicio = models.DateTimeField()
-    horario_fim = models.DateTimeField()
+    horario_inicio = models.TimeField()
+    horario_fim = models.TimeField()
     sala = models.CharField("Sala", max_length=50, default="") # Adicionado
 
     def __str__(self):
