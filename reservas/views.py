@@ -279,3 +279,22 @@ def mural_principal(request):
         'hoje': hoje.strftime('%d/%m/%Y'),
         'reservas': reservas_hoje
     })
+
+@login_required
+def atualizar_quantidade(request):
+    if not request.user.is_staff:
+        messages.error(request, "Sem permissão.")
+        return redirect('mural')
+
+    if request.method == "POST":
+        equipamento_id = request.POST.get('equipamento_id')
+        quantidade = request.POST.get('quantidade')
+        try:
+            equip = Equipamento.objects.get(id=equipamento_id)
+            equip.quantidade = int(quantidade)
+            equip.save()
+            messages.success(request, f"Quantidade de '{equip.nome}' atualizada!")
+        except Exception as e:
+            messages.error(request, f"Erro: {e}")
+
+    return redirect('mural')
