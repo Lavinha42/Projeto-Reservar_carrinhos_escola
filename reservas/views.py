@@ -1,4 +1,3 @@
-
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Reserva, Equipamento
 from django.contrib.auth.decorators import login_required
@@ -87,7 +86,7 @@ def mural(request):
         data_reserva = request.POST.get('data')
         horario_inicio_obj = datetime.strptime(horario_inicio, '%H:%M').time()
         horario_fim_obj = datetime.strptime(horario_fim, '%H:%M').time()
-    
+
 
         professor_reserva = request.user
 
@@ -107,8 +106,8 @@ def mural(request):
         ja_reservado = Reserva.objects.filter(
             equipamento_id=equipamento_id,
             data_uso=data_reserva,
-            horario_inicio=horario_inicio,
-            horario_fim=horario_fim
+            horario_inicio=horario_inicio_obj,
+            horario_fim=horario_fim_obj
         ).exists()
 
         if ja_reservado:
@@ -121,8 +120,8 @@ def mural(request):
                     equipamento=equip_obj,
                     sala=sala,
                     horario_inicio=horario_inicio,
-                    horario_fim=horario_fim_obj,
-                    data_uso=data_reserva_obj
+                    horario_fim=horario_fim,
+                    data_uso=data_reserva
                 )
                 messages.success(request, f"Reserva realizada com sucesso para {professor_reserva.username}!")
             except Exception as e:
@@ -216,14 +215,16 @@ def carregar_mural(request):
     data_sel = request.GET.get('data')
 
     if not data_sel:
-        data_sel = date.today()
+        data_sel = date.today().strftime('%Y-%m-%d')
 
-    hora_atual = timezone.now().time()
+    data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
+
+    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
     hoje = date.today()
 
-    if str(data_sel) == str(hoje):
+    if data_sel_obj == hoje:
         reservas = Reserva.objects.filter(
-            data_uso=data_sel,
+            data_uso=data_sel_obj,
             horario_fim__gte=hora_atual
         ).order_by('horario_inicio')
     else:
@@ -244,7 +245,7 @@ def carregar_mural_publico(request):
     if not data_sel:
         data_sel = date.today()
 
-    hora_atual = timezone.now().time()
+    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
     hoje = date.today()
 
     if str(data_sel) == str(hoje):
@@ -261,10 +262,14 @@ def carregar_mural_publico(request):
 
 def mural_principal(request):
     hoje = date.today()
-    hora_atual = timezone.now().time()
-    
+    hora_atual = timezone.localtime(timezone.now()).time()
+    data_sel = date.today().strftime('%Y-%m-%d')
+
+
+    data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
+
     reservas_hoje = Reserva.objects.filter(
-        data_uso=hoje,
+        data_uso=data_sel_obj,
         horario_fim__gte=hora_atual
     ).order_by('horario_inicio')
 
