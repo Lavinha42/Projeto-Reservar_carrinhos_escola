@@ -219,8 +219,9 @@ def carregar_mural(request):
 
     data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
 
-    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
-    hoje = date.today()
+    agora_local = timezone.localtime(timezone.now())
+    hora_atual = agora_local.time()
+    hoje = agora_local.date()
 
     if data_sel_obj == hoje:
         reservas = Reserva.objects.filter(
@@ -245,8 +246,9 @@ def carregar_mural_publico(request):
     if not data_sel:
         data_sel = date.today()
 
-    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
-    hoje = date.today()
+    agora_local = timezone.localtime(timezone.now())
+    hora_atual = agora_local.time()
+    hoje = agora_local.date()
 
     if str(data_sel) == str(hoje):
         reservas = Reserva.objects.filter(
