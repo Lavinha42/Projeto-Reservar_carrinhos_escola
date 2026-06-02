@@ -68,6 +68,7 @@ def Entrar(request):
 @login_required  # ← CORREÇÃO: removido @login_required duplicado
 def mural(request):
     agora = timezone.localtime(timezone.now()) 
+    print(f"DEBUG: O Django acha que agora são: {agora.
     hoje = agora.date()
     hora_atual = agora.time()
     
