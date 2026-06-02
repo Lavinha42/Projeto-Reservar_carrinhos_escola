@@ -85,6 +85,9 @@ def mural(request):
         horario_inicio = request.POST.get('horario_inicio')
         horario_fim = request.POST.get('horario_fim')
         data_reserva = request.POST.get('data')
+        horario_inicio_obj = datetime.strptime(horario_inicio, '%H:%M').time()
+        horario_fim_obj = datetime.strptime(horario_fim, '%H:%M').time()
+    
 
         professor_reserva = request.user
 
@@ -118,8 +121,8 @@ def mural(request):
                     equipamento=equip_obj,
                     sala=sala,
                     horario_inicio=horario_inicio,
-                    horario_fim=horario_fim,
-                    data_uso=data_reserva
+                    horario_fim=horario_fim_obj,
+                    data_uso=data_reserva_obj
                 )
                 messages.success(request, f"Reserva realizada com sucesso para {professor_reserva.username}!")
             except Exception as e:
