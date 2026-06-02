@@ -69,16 +69,16 @@ def mural(request):
     agora = timezone.localtime(timezone.now()) 
     hoje = agora.date()
     hora_atual = agora.time()
-
-    print("AGORA:", timezone.localtime().time())
-    print("HOJE:", timezone.localtime().date())
-
     
     # pega a data da URL se existir, senão usa hoje
     data_param = request.GET.get('data')
     data_selecionada = data_param if data_param else hoje.strftime('%Y-%m-%d')
 
     if request.method == "POST":
+        data_reserva_str = request.POST.get('data')
+        horario_inicio_str = request.POST.get('horario_inicio')
+        data_reservae = datetime.strptime(data_reserva_str, '%Y-%m-%d').date()
+        hora_inicioe = datetime.strptime(horario_inicio_str, '%H:%M').time()
         equipamento_id = request.POST.get('equipamento')
         sala = request.POST.get('sala')
         horario_inicio = request.POST.get('horario_inicio')
@@ -86,6 +86,10 @@ def mural(request):
         data_reserva = request.POST.get('data')
 
         professor_reserva = request.user
+
+        if data_reservae == hoje and hora_inicioe < hora_atual:
+            messages.error(request, "Este horário já passou e não pode ser reservado!")
+            return redirect('mural')
 
 
         if request.user.is_staff and request.POST.get('professor'):
@@ -208,14 +212,16 @@ def carregar_mural(request):
     data_sel = request.GET.get('data')
 
     if not data_sel:
-        data_sel = date.today()
+        data_sel = date.today().strftime('%Y-%m-%d')
+
+    data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
 
     hora_atual = timezone.now().time()
     hoje = date.today()
 
-    if str(data_sel) == str(hoje):
+    if data_sel_obj == hoje:
         reservas = Reserva.objects.filter(
-            data_uso=data_sel,
+            data_uso=data_sel_obj,
             horario_fim__gte=hora_atual
         ).order_by('horario_inicio')
     else:
@@ -254,9 +260,13 @@ def carregar_mural_publico(request):
 def mural_principal(request):
     hoje = date.today()
     hora_atual = timezone.now().time()
-    
+    data_sel = date.today().strftime('%Y-%m-%d')
+
+
+    data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
+
     reservas_hoje = Reserva.objects.filter(
-        data_uso=hoje,
+        data_uso=data_sel_obj,
         horario_fim__gte=hora_atual
     ).order_by('horario_inicio')
 
