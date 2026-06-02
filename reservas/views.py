@@ -84,6 +84,9 @@ def mural(request):
         horario_inicio = request.POST.get('horario_inicio')
         horario_fim = request.POST.get('horario_fim')
         data_reserva = request.POST.get('data')
+        horario_inicio_obj = datetime.strptime(horario_inicio, '%H:%M').time()
+        horario_fim_obj = datetime.strptime(horario_fim, '%H:%M').time()
+
 
         professor_reserva = request.user
 
@@ -103,8 +106,8 @@ def mural(request):
         ja_reservado = Reserva.objects.filter(
             equipamento_id=equipamento_id,
             data_uso=data_reserva,
-            horario_inicio=horario_inicio,
-            horario_fim=horario_fim
+            horario_inicio=horario_inicio_obj,
+            horario_fim=horario_fim_obj
         ).exists()
 
         if ja_reservado:
