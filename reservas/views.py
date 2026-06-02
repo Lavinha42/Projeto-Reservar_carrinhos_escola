@@ -219,8 +219,9 @@ def carregar_mural(request):
 
     data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
 
-    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
-    hoje = date.today()
+    agora_local = timezone.localtime(timezone.now())
+    hora_atual = agora_local.time()
+    hoje = agora_local.date()
 
     if data_sel_obj == hoje:
         reservas = Reserva.objects.filter(
@@ -245,8 +246,9 @@ def carregar_mural_publico(request):
     if not data_sel:
         data_sel = date.today()
 
-    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
-    hoje = date.today()
+    agora_local = timezone.localtime(timezone.now())
+    hora_atual = agora_local.time()
+    hoje = agora_local.date()
 
     if str(data_sel) == str(hoje):
         reservas = Reserva.objects.filter(
@@ -278,4 +280,21 @@ def mural_principal(request):
         'reservas': reservas_hoje
     })
 
-#1
+@login_required
+def atualizar_quantidade(request):
+    if not request.user.is_staff:
+        messages.error(request, "Sem permissão.")
+        return redirect('mural')
+
+    if request.method == "POST":
+        equipamento_id = request.POST.get('equipamento_id')
+        quantidade = request.POST.get('quantidade')
+        try:
+            equip = Equipamento.objects.get(id=equipamento_id)
+            equip.quantidade = int(quantidade)
+            equip.save()
+            messages.success(request, f"Quantidade de '{equip.nome}' atualizada!")
+        except Exception as e:
+            messages.error(request, f"Erro: {e}")
+
+    return redirect('mural')
