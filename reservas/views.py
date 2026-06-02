@@ -66,7 +66,7 @@ def Entrar(request):
 
 @login_required  # ← CORREÇÃO: removido @login_required duplicado
 def mural(request):
-    agora = timezone.localtime(timezone.now()) 
+    agora = timezone.localtime(timezone.now())
     hoje = agora.date()
     hora_atual = agora.time()
     
@@ -219,7 +219,7 @@ def carregar_mural(request):
 
     data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
 
-    hora_atual = timezone.now().time()
+    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
     hoje = date.today()
 
     if data_sel_obj == hoje:
@@ -245,7 +245,7 @@ def carregar_mural_publico(request):
     if not data_sel:
         data_sel = date.today()
 
-    hora_atual = timezone.now().time()
+    hora_atual = timezone.localtime(timezone.now()).time()  # era timezone.now().time()
     hoje = date.today()
 
     if str(data_sel) == str(hoje):
@@ -262,7 +262,7 @@ def carregar_mural_publico(request):
 
 def mural_principal(request):
     hoje = date.today()
-    hora_atual = timezone.now().time()
+    hora_atual = timezone.localtime(timezone.now()).time()
     data_sel = date.today().strftime('%Y-%m-%d')
 
 
