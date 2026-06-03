@@ -90,7 +90,7 @@ def mural(request):
 
         professor_reserva = request.user
 
-        if data_reservae == hoje and hora_inicioe < hora_atual:
+        if data_reservae == hoje and horario_fim_obj < hora_atual:
             messages.error(request, "Este horário já passou e não pode ser reservado!")
             return redirect('mural')
 
