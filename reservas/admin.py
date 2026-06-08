@@ -10,5 +10,3 @@ class EquipamentoAdmin(admin.ModelAdmin):
 @admin.register(Reserva)
 class ReservaAdmin(admin.ModelAdmin):
     list_display = ('professor', 'equipamento', 'data_uso', 'horario_inicio', 'horario_fim')
-
-

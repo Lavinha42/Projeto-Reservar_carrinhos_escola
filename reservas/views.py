@@ -64,7 +64,7 @@ def Entrar(request):
 
     return render(request, 'longa.html')
 
-@login_required  # ← CORREÇÃO: removido @login_required duplicado
+@login_required
 def mural(request):
     agora = timezone.localtime(timezone.now())
     hoje = agora.date()
@@ -87,13 +87,11 @@ def mural(request):
         horario_inicio_obj = datetime.strptime(horario_inicio, '%H:%M').time()
         horario_fim_obj = datetime.strptime(horario_fim, '%H:%M').time()
 
-
         professor_reserva = request.user
 
         if data_reservae == hoje and horario_fim_obj < hora_atual:
             messages.error(request, "Este horário já passou e não pode ser reservado!")
             return redirect('mural')
-
 
         if request.user.is_staff and request.POST.get('professor'):
             username_informado = request.POST.get('professor').strip()
@@ -105,7 +103,7 @@ def mural(request):
 
         ja_reservado = Reserva.objects.filter(
             equipamento_id=equipamento_id,
-            data_uso=data_reserva,
+            data_uso=data_reservae,
             horario_inicio=horario_inicio_obj,
             horario_fim=horario_fim_obj
         ).exists()
@@ -119,9 +117,9 @@ def mural(request):
                     professor=professor_reserva,
                     equipamento=equip_obj,
                     sala=sala,
-                    horario_inicio=horario_inicio,
-                    horario_fim=horario_fim,
-                    data_uso=data_reserva
+                    horario_inicio=horario_inicio_obj,
+                    horario_fim=horario_fim_obj,
+                    data_uso=data_reservae
                 )
                 messages.success(request, f"Reserva realizada com sucesso para {professor_reserva.username}!")
             except Exception as e:
@@ -167,7 +165,7 @@ def exportar_reservas_excel(request):
             reserva.professor.username,
             reserva.equipamento.nome,
             reserva.sala,
-            f"{reserva.horario_inicio} - {reserva.horario_fim}",  # ← CORREÇÃO
+            f"{reserva.horario_inicio} - {reserva.horario_fim}",
             str(reserva.data_uso)
         ])
 
@@ -196,10 +194,15 @@ def listar_disponiveis(request):
     horario_fim_sel = request.GET.get('horario_fim')
 
     try:
+        # Converter strings para objetos de data/hora
+        data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date()
+        horario_inicio_obj = datetime.strptime(horario_inicio_sel, '%H:%M').time()
+        horario_fim_obj = datetime.strptime(horario_fim_sel, '%H:%M').time()
+        
         ocupados = Reserva.objects.filter(
-            data_uso=data_sel,
-            horario_inicio=horario_inicio_sel,
-            horario_fim=horario_fim_sel
+            data_uso=data_sel_obj,
+            horario_inicio=horario_inicio_obj,
+            horario_fim=horario_fim_obj
         ).values_list('equipamento_id', flat=True)
 
         disponiveis = Equipamento.objects.exclude(id__in=ocupados)
@@ -209,8 +212,6 @@ def listar_disponiveis(request):
     except Exception as e:
         return JsonResponse({'erro': str(e)}, status=500)
 
-# ← CORREÇÃO: apenas uma função carregar_mural, com filtro automático por horário
-# Mural do professor (com botão excluir)
 def carregar_mural(request):
     data_sel = request.GET.get('data')
 
@@ -230,34 +231,35 @@ def carregar_mural(request):
         ).order_by('horario_inicio')
     else:
         reservas = Reserva.objects.filter(
-            data_uso=data_sel
+            data_uso=data_sel_obj
         ).order_by('horario_inicio')
 
     return render(request, 'partials/lista_reservas.html', {
         'reservas': reservas,
-        'user': request.user,  # ✅ passa o usuário logado
+        'user': request.user,
     })
 
-
-# Mural público (sem botão excluir)
 def carregar_mural_publico(request):
     data_sel = request.GET.get('data')
 
     if not data_sel:
-        data_sel = date.today()
+        data_sel = date.today().strftime('%Y-%m-%d')
+
+    # Converter string para date object
+    data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
 
     agora_local = timezone.localtime(timezone.now())
     hora_atual = agora_local.time()
     hoje = agora_local.date()
 
-    if str(data_sel) == str(hoje):
+    if data_sel_obj == hoje:
         reservas = Reserva.objects.filter(
-            data_uso=data_sel,
+            data_uso=data_sel_obj,
             horario_fim__gte=hora_atual
         ).order_by('horario_inicio')
     else:
         reservas = Reserva.objects.filter(
-            data_uso=data_sel
+            data_uso=data_sel_obj
         ).order_by('horario_inicio')
 
     return render(request, 'partials/lista_reservas_consulta.html', {'reservas': reservas})
@@ -266,7 +268,6 @@ def mural_principal(request):
     hoje = date.today()
     hora_atual = timezone.localtime(timezone.now()).time()
     data_sel = date.today().strftime('%Y-%m-%d')
-
 
     data_sel_obj = datetime.strptime(data_sel, '%Y-%m-%d').date() if isinstance(data_sel, str) else data_sel
 
